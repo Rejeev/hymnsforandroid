@@ -11,10 +11,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import com.lemuelinchrist.android.hymns.HymnGroup;
 import com.lemuelinchrist.android.hymns.R;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -55,10 +53,6 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
-
-            MultiSelectListPreference disableLanguages = findPreference("disableLanguages");
-            disableLanguages.setEntries(HymnGroup.getArrayOfSimpleNames());
-            disableLanguages.setEntryValues(HymnGroup.getArrayOfCodes());
         }
 
         public static class AboutDialog extends DialogFragment {

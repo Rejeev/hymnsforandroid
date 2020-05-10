@@ -1,7 +1,6 @@
 package com.lemuelinchrist.android.hymns;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +11,12 @@ import java.util.List;
 public enum HymnGroup {
     E("English", Color.rgb(0x3D, 0x57, 0x7A),
             Color.rgb(0xB0, 0xBE, 0xC5)),
+
     // Green
-    C("中文-繁", Color.rgb(0x66, 0x99, 0x00),
+    ML("മലയാളം", Color.rgb(0x66, 0x99, 0x00),
             Color.rgb(0xA5, 0xD6, 0xA7)),
     //Purple
-    CS("補充本-繁", Color.rgb(0x99, 0x33, 0xCC),
-            Color.rgb(0xCE, 0x93, 0xD8)),
-    // Green
-    Z("中文-简", Color.rgb(0x66, 0x99, 0x00),
-            Color.rgb(0xA5, 0xD6, 0xA7)),
-    //Purple
-    ZS("補充本-简", Color.rgb(0x99, 0x33, 0xCC),
+  /*  CS("補充本", Color.rgb(0x99, 0x33, 0xCC),
             Color.rgb(0xCE, 0x93, 0xD8)),
     //Orange
     CB("Cebuano", Color.rgb(0xFF, 0x88, 0x00),
@@ -45,6 +39,9 @@ public enum HymnGroup {
     //Light Green
     J("Japanese",Color.rgb(0x8B,0xC3,0x4A),
             Color.rgb(0xAE,0xD5,0x81)),
+
+
+*/
     //Blue
     BF("Be Filled", Color.rgb(0x00, 0x99, 0xCC),
             Color.rgb(0x90, 0xCA, 0xF9)),
@@ -87,6 +84,7 @@ public enum HymnGroup {
         }
     }
 
+
     public int getDayColor() {
         return dayColor;
     }
@@ -110,20 +108,5 @@ public enum HymnGroup {
         return list.toArray(new String[list.size()]);
     }
 
-    public static String[] getArrayOfCodes() {
-        List<String> list = new ArrayList<String>();
-        for (HymnGroup group: HymnGroup.values()) {
-            list.add(group.name());
 
-        }
-        return list.toArray(new String[list.size()]);
-    }
-
-    public static HymnGroup getFromSimpleName(String simpleName) {
-        for (HymnGroup group: HymnGroup.values()) {
-            if(group.getSimpleName().equals(simpleName)) return group;
-        }
-        Log.e(HymnGroup.class.getSimpleName(), "warning: selected Hymn group not found. Switching to default group: E");
-        return HymnGroup.E;
-    }
 }

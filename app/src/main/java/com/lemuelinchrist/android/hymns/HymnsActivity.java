@@ -1,5 +1,7 @@
 package com.lemuelinchrist.android.hymns;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -29,17 +31,16 @@ import com.lemuelinchrist.android.hymns.style.Theme;
 public class HymnsActivity extends AppCompatActivity implements OnLyricVisibleListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
     protected final int SEARCH_REQUEST = 1;
-    protected HymnGroup selectedHymnGroup = HymnGroup.E;
+    protected HymnGroup selectedHymnGroup = HymnGroup.ML;
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private ActionBar actionBar;
-    private HymnBookCollection hymnBookCollection;
+    public HymnBookCollection hymnBookCollection;
     private Theme theme = Theme.LIGHT;
     private SharedPreferences sharedPreferences;
     private boolean preferenceChanged = true;
-    private HymnDrawer hymnDrawer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,10 @@ public class HymnsActivity extends AppCompatActivity implements OnLyricVisibleLi
             }
         });
 
-        refreshHymnDrawer();
+        // set up the drawer's list view with items and click listener
+        mDrawerList.setAdapter(new HymnDrawerListAdapter(this,
+                R.layout.drawer_hymngroup_list));
+
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
@@ -90,12 +94,6 @@ public class HymnsActivity extends AppCompatActivity implements OnLyricVisibleLi
         setDisplayConfig();
     }
 
-    private void refreshHymnDrawer() {
-        hymnDrawer = new HymnDrawer(this,
-                R.layout.drawer_hymngroup_list);
-        mDrawerList.setAdapter(hymnDrawer);
-    }
-
     // Warning! this method is very crucial. Without it you will not have a hamburger icon on your
     // action bar.
     @Override
@@ -105,12 +103,31 @@ public class HymnsActivity extends AppCompatActivity implements OnLyricVisibleLi
         mDrawerToggle.syncState();
     }
 
+    private void showAlert(int message, int title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message).setTitle(title);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void selectDrawerItem(int position) {
         Log.i(HymnsActivity.class.getSimpleName(), "Drawer Item selected: " + position);
 
-        selectedHymnGroup = hymnDrawer.getSelectedHymnGroup(position);
+        selectedHymnGroup = HymnGroup.values()[position];
+
+        if (selectedHymnGroup == null) {
+            Log.w(HymnsActivity.class.getSimpleName(), "warning: selected Hymn group currently not supported. Switching to default group: E");
+            selectedHymnGroup = HymnGroup.ML;
+        }
+
         hymnBookCollection.translateTo(selectedHymnGroup);
         mDrawerLayout.closeDrawer(mDrawerList);
+
     }
 
 
@@ -193,7 +210,7 @@ public class HymnsActivity extends AppCompatActivity implements OnLyricVisibleLi
     @Override
     public void onLyricVisible(String hymnId) {
 
-        if (hymnId==null) hymnId="E1";
+        if (hymnId==null) hymnId="ML1";
 
         try {
             selectedHymnGroup = HymnGroup.getHymnGroupFromID(hymnId);
@@ -219,7 +236,6 @@ public class HymnsActivity extends AppCompatActivity implements OnLyricVisibleLi
         if(preferenceChanged) {
             setDisplayConfig();
             changeThemeColor();
-            refreshHymnDrawer();
             hymnBookCollection.refresh();
             preferenceChanged=false;
         }
